@@ -1,123 +1,86 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  MyApp({super.key});
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  var likeCount = 0;
+  buttonPush(a) {
+    a++;
+  }
+  List userInfo = [
+    {"name": "박한", "like": 0 },
+    {"name": "park", "like": 0 },
+    {"name": "han", "like": 0 },
+  ];
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: (){
+            setState(() {
+              likeCount++;
+            });
+          },
+          child: Text(likeCount.toString()),
+        ),
         appBar: AppBar(
-          centerTitle: false,
-          title: const Text(
-            "xx동3가",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          actions: const [
-            IconButton(
-              onPressed: null,
-              icon: Icon(Icons.search),
-            ),
-            IconButton(
-              onPressed: null,
-              icon: Icon(Icons.menu),
-            ),
-            IconButton(
-              onPressed: null,
-              icon: Icon(Icons.notification_add),
-            ),
-          ],
+          backgroundColor: Colors.blue,
         ),
-        body: Container(
-          width: double.infinity,
-          height: 195,
-          padding: const EdgeInsets.fromLTRB(15, 40, 15, 15),
-          child: SizedBox(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Flexible(
-                  flex: 2,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.asset(
-                      "assets/camera.png",
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+
+        body: ListView.builder(
+            itemCount: 3,
+            itemBuilder: (context, i) {
+              return Container(
+                width: double.infinity,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Text(userInfo[i]["like"].toString()),
+                    Text(userInfo[i]["name"]),
+                    ElevatedButton(
+                        onPressed: (){
+                          setState(() {
+                            userInfo[i]["like"]++;
+                          });
+                        },
+                        child: Text("좋아요")
+                    )
+                  ],
                 ),
 
-                const SizedBox(width: 20),
-
-                Flexible(
-                  flex: 3,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "캐논 DSLR 100D (단렌즈, 충전기 16기가SD 포함)",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 17,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-
-                          SizedBox(height: 10),
-
-                          Text(
-                            "xx구 xx동 · 박한 · 10분 전",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                            ),
-                          ),
-
-                          SizedBox(height: 10),
-
-                          Text(
-                            "1000원",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Icon(Icons.thumb_up, size: 18, color: Colors.grey),
-                          SizedBox(width: 4),
-                          Text(
-                            "4",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+              );
+            }
         ),
+
+        bottomNavigationBar: CustomBottomAppBar(),
+      ),
+    );
+  }
+}
+
+class CustomBottomAppBar extends StatelessWidget {
+  const CustomBottomAppBar({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return BottomAppBar(
+      height: 40,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Icon(Icons.phone),
+          Icon(Icons.message),
+          Icon(Icons.contact_page)
+        ],
       ),
     );
   }
