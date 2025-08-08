@@ -1,87 +1,200 @@
+import 'package:contact/userInfo.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
+
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  var likeCount = 0;
-  buttonPush(a) {
-    a++;
-  }
-  List userInfo = [
-    {"name": "박한", "like": 0 },
-    {"name": "park", "like": 0 },
-    {"name": "han", "like": 0 },
-  ];
+
+  UserInfo userInfo = UserInfo(
+      nickName: "bakan.lilil",
+      name: "박한",
+      post: 1,
+      followers: 100,
+      following: 200,
+  );
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        scaffoldBackgroundColor: const Color(0xFF161616),
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(color: Colors.white),
+        ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF161616),
+          foregroundColor: Colors.white,
+          elevation: 0,
+        ),
+      ),
+
       home: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: (){
-            setState(() {
-              likeCount++;
-            });
-          },
-          child: Text(likeCount.toString()),
-        ),
         appBar: AppBar(
-          backgroundColor: Colors.blue,
-        ),
-
-        body: ListView.builder(
-            itemCount: 3,
-            itemBuilder: (context, i) {
-              return Container(
-                width: double.infinity,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Text(userInfo[i]["like"].toString()),
-                    Text(userInfo[i]["name"]),
-                    ElevatedButton(
-                        onPressed: (){
-                          setState(() {
-                            userInfo[i]["like"]++;
-                          });
-                        },
-                        child: Text("좋아요")
-                    )
-                  ],
+          title: Row(
+            children: [
+              const Icon(Icons.lock_outline_rounded, size: 17),
+              const SizedBox(width: 5),
+              Text(
+                userInfo.nickName,
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
                 ),
-
-              );
-            }
+              ),
+              const Icon(Icons.keyboard_arrow_down_sharp, size: 20,),
+            ],
+          ),
+          actions: const [
+            Icon(Icons.add_to_drive_outlined, size: 27),
+            SizedBox(width: 20),
+            Icon(Icons.add_box_outlined, size: 27),
+            SizedBox(width: 20),
+            Icon(Icons.menu, size: 27),
+            SizedBox(width: 15),
+          ],
         ),
 
-        bottomNavigationBar: CustomBottomAppBar(),
+        body: Container(
+          child: Column(
+            children: [
+              ProfileHeader(userInfo: userInfo),
+              ProfileButtons()
+            ],
+          ),
+        ),
+
       ),
     );
   }
 }
 
-class CustomBottomAppBar extends StatelessWidget {
-  const CustomBottomAppBar({super.key});
+class ProfileHeader extends StatefulWidget {
+  const ProfileHeader({super.key, required this.userInfo});
+  final UserInfo userInfo;
+
+  @override
+  State<ProfileHeader> createState() => _ProfileHeaderState();
+}
+
+class _ProfileHeaderState extends State<ProfileHeader> {
   @override
   Widget build(BuildContext context) {
-    return BottomAppBar(
-      height: 40,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return Container(
+      padding: EdgeInsets.fromLTRB(15, 10, 15, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.phone),
-          Icon(Icons.message),
-          Icon(Icons.contact_page)
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CircleAvatar(
+                radius: 42,
+                backgroundImage: AssetImage("assets/images/cat.png"),
+              ),
+
+              SizedBox(width: 20,),
+
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.userInfo.name,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        StatItem(label: "게시물", count: widget.userInfo.post),
+                        StatItem(label: "팔로워", count: widget.userInfo.followers),
+                        StatItem(label: "팔로잉", count: widget.userInfo.following),
+                        SizedBox()
+                      ],
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+
+          SizedBox(height: 10,),
+
+          Text(
+            "한세사이버보안고 다니는 박한임",
+            style: TextStyle(
+                fontWeight: FontWeight.w700
+            ),
+          )
         ],
       ),
     );
   }
 }
+
+class StatItem extends StatelessWidget {
+  final String label;
+  final int count;
+
+  const StatItem({super.key, required this.label, required this.count});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+            count.toString(),
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16
+            ),
+        ),
+        Text(
+            label,
+            style:
+            TextStyle(
+                fontSize: 14
+            )
+        ),
+      ],
+    );
+  }
+}
+
+class ProfileButtons extends StatelessWidget {
+  const ProfileButtons({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: OutlinedButton(
+              onPressed: () {},
+              child: const Text("프로필 편집")
+          )
+        ),
+        SizedBox(width: 8),
+        Flexible(
+          flex: 1,
+          child: OutlinedButton(onPressed: () {}, child: const Text("프로필 공유"))),
+        SizedBox(width: 8)
+      ],
+    );
+  }
+}
+
+
+
+
