@@ -1,5 +1,7 @@
 import 'package:contact/userInfo.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main() {
   runApp(const MyApp());
@@ -21,6 +23,23 @@ class _MyAppState extends State<MyApp> {
       followers: 100,
       following: 200,
   );
+
+  var data = [];
+
+  getData() async {
+    var result = await http.get( Uri.parse('https://codingapple1.github.io/app/data.json') );
+    var res2 = jsonDecode(result.body);
+
+    setState(() {
+      data = res2;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,15 +82,15 @@ class _MyAppState extends State<MyApp> {
           ],
         ),
 
-        body: Container(
+        body: SizedBox(
           child: Column(
             children: [
               ProfileHeader(userInfo: userInfo),
-              ProfileButtons()
+              ProfileButtons(),
+              ProfileNavbar(data: data),
             ],
           ),
         ),
-
       ),
     );
   }
@@ -182,18 +201,81 @@ class ProfileButtons extends StatelessWidget {
         Expanded(
           child: OutlinedButton(
               onPressed: () {},
-              child: const Text("프로필 편집")
+              child: Text("프로필 편집")
           )
         ),
         SizedBox(width: 8),
         Flexible(
           flex: 1,
-          child: OutlinedButton(onPressed: () {}, child: const Text("프로필 공유"))),
+          child: OutlinedButton(
+              onPressed: () {},
+              child: Text("프로필 공유")
+          )
+        ),
         SizedBox(width: 8)
       ],
     );
   }
 }
+
+
+class ProfileNavbar extends StatefulWidget {
+
+  final List data;
+  const ProfileNavbar({super.key, required this.data});
+
+
+  @override
+  State<ProfileNavbar> createState() => _ProfileNavbarState();
+}
+
+class _ProfileNavbarState extends State<ProfileNavbar> {
+  
+  final List<IconData> icons = [
+    Icons.menu,
+    Icons.video_call_outlined,
+    Icons.person
+  ];
+
+  int selectedIndex = 0;
+
+  void handleClick (int index){
+    setState(() {
+      selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: List.generate(icons.length, (index){
+            return IconButton(
+                onPressed: (){
+                  handleClick(index);},
+                  icon: Icon(
+                    icons[index],
+                    size: 32,
+                    color: selectedIndex == index ? Colors.white : Colors.white38,
+                  )
+            );
+          }),
+        ),
+        Text(widget.data[selectedIndex]["content"]),
+        Image.network(widget.data[selectedIndex]["image"])
+      ],
+    );
+  }
+}
+
+
+
+
+
 
 
 
